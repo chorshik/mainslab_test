@@ -1,0 +1,27 @@
+version: '3.10'
+services:
+  server:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/:/src/
+    command: uvicorn app.api.server:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    env_file:
+      - ./src/.env
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14.5-alpine3.16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./src/.env
+    ports:
+      - 5432:5432
+
+volumes:
+    postgres_data:
